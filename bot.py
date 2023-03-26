@@ -7,8 +7,6 @@ from flask import Flask
 
 app = Flask(__name__)
 
-# function to run discord bot
-
 
 @app.route('/')
 def run_bot():
