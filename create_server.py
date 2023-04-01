@@ -3,8 +3,6 @@ from threading import Thread
 
 import os
 
-import discord
-
 def start_server():
     app = Flask('')
 

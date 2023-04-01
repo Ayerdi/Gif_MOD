@@ -22,7 +22,7 @@ async def check_time_whitelist():
     for user_id, name, added_time in whitelist:
         time_left = current_time - float(added_time)
         horas = 16
-        time_limit = 10 #horas * 3600 
+        time_limit = horas * 3600 
         if time_left > time_limit:
             await remove_from_whitelist(user_id)
 
@@ -47,7 +47,6 @@ async def add(ctx):
               id_list.append(int(user[0]))
             print(id_list)
             for user in ctx.message.mentions:
-              print(type(user.id))
               if user.id in id_list:
                 await ctx.message.channel.send(f"{user.name}, ya está en la lista blanca.")
               else:
@@ -90,13 +89,13 @@ async def on_message(message):
         return
     if 'https://tenor.com/view/' in message.content:
         if message.author.id not in [id for id, _, _ in whitelist]:
-            if message.channel.id != 792734128193011712:  #canal general = 613130176808878109
+            if message.channel.id != 1090042458022354994:  #canal general = 613130176808878109 canal pruebas = 1090042458022354994 canal editar-texto= 792734128193011712
                 deleted_message_content = message.content
                 await message.delete()
-                destination_channel = message.guild.get_channel(613130176808878109)
+                destination_channel = message.guild.get_channel(1090042458022354994)
                 user_mention = message.author.mention
                 channel_mention = message.channel.mention
-                await destination_channel.send(f"{user_mention} ha enviado el siguiente gif por el canal {channel_mention}:\n{deleted_message_content}\nTen más cuidado la próxima vez.")
+                await destination_channel.send(f"{user_mention} ha enviado el siguiente gif por el canal {channel_mention}:\nTen más cuidado la próxima vez. \n{deleted_message_content}")
             else:
                 whitelist.append((message.author.id, message.author.name, time.time()))
                 save_whitelist(whitelist)
