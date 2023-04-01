@@ -9,19 +9,22 @@ from datetime import datetime
 async def on_ready():
     print(f'{client.user} has connected to Discord!')
     change_status.start()
-    loop = asyncio.get_event_loop()
-    loop.call_later(57600, check_time_whitelist)
+    while True:
+        await check_time_whitelist()
+        await asyncio.sleep(10)
+    # loop = asyncio.get_event_loop()
+    # loop.call_later(57600, check_time_whitelist)
 
 
-def check_time_whitelist():
+async def check_time_whitelist():
     whitelist = load_whitelist()
     current_time = time.time()
     for user_id, name, added_time in whitelist:
-        time_left = current_time - added_time
+        time_left = current_time - float(added_time)
         horas = 16
-        time_limit = horas * 3600 
+        time_limit = 10 #horas * 3600 
         if time_left > time_limit:
-            remove_from_whitelist(user_id, added_time)
+            await remove_from_whitelist(user_id)
 
 
 @client.command()
@@ -93,7 +96,7 @@ async def on_message(message):
                 destination_channel = message.guild.get_channel(613130176808878109)
                 user_mention = message.author.mention
                 channel_mention = message.channel.mention
-                await destination_channel.send(f"{user_mention} ha enviado el siguiente gif por el canal {channel_mention}:\n{deleted_message_content}\nTen más cuidado la próxima vez.", reference=message)
+                await destination_channel.send(f"{user_mention} ha enviado el siguiente gif por el canal {channel_mention}:\n{deleted_message_content}\nTen más cuidado la próxima vez.")
             else:
                 whitelist.append((message.author.id, message.author.name, time.time()))
                 save_whitelist(whitelist)
@@ -119,13 +122,13 @@ async def change_status():
     await client.change_presence(activity=discord.Game(next(status)))
 
 
-def get_time_left(user_id):
-    for i, (id, name, time_added) in enumerate(whitelist):
-        if id == user_id:
-            remove_time = time_added + timedelta(hours=16)
-            time_left = remove_time - datetime.now()
-            return time_left
-    return None
+# def get_time_left(user_id):
+#     for i, (id, name, time_added) in enumerate(whitelist):
+#         if id == user_id:
+#             remove_time = time_added + timedelta(hours=16)
+#             time_left = remove_time - datetime.now()
+#             return time_left
+#     return None
 
 
 

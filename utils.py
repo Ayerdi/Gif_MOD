@@ -51,10 +51,11 @@ def load_whitelist():
 
 
 async def remove_from_whitelist(user_id):
-    global whitelist # FIXME: This is a bad practice
+    whitelist = load_whitelist()
     whitelist = [(id, name, ta) for id, name, ta in whitelist if id != user_id]
     save_whitelist(whitelist)
-    print_whitelist()
+    print_whitelist(whitelist)
+    print(f"{user_id} ha sido removido de la whitelist")
 
 def print_time_left():
     current_time = datetime.now()
