@@ -88,14 +88,11 @@ async def on_message(message):
     if message.author.bot:
         return
     if 'https://tenor.com/view/' in message.content:
-        if message.author.id not in [id for id, _, _ in whitelist]:
+        id_list=[]
+        if message.author.id not in [int(id) for id, _, _ in whitelist]:
             if message.channel.id != 1090042458022354994:  #canal general = 613130176808878109 canal pruebas = 1090042458022354994 canal editar-texto= 792734128193011712
                 deleted_message_content = message.content
-                await message.delete()
-                destination_channel = message.guild.get_channel(1090042458022354994)
-                user_mention = message.author.mention
-                channel_mention = message.channel.mention
-                await destination_channel.send(f"{user_mention} ha enviado el siguiente gif por el canal {channel_mention}:\nTen más cuidado la próxima vez. \n{deleted_message_content}")
+                await message.delete() 
             else:
                 whitelist.append((message.author.id, message.author.name, time.time()))
                 save_whitelist(whitelist)
