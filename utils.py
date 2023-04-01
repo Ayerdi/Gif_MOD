@@ -50,8 +50,8 @@ def load_whitelist():
         print("Whitelist file not found.")
 
 
-async def remove_from_whitelist(user_id):
-    global whitelist # FIXME: This is a bad practice
+async def remove_from_whitelist(user_id, time_added):
+    global whitelist
     whitelist = [(id, name, ta) for id, name, ta in whitelist if id != user_id]
     save_whitelist(whitelist)
     print_whitelist()
