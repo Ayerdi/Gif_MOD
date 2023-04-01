@@ -7,9 +7,6 @@ import datetime
 from datetime import datetime
 now = datetime.now()
 
-os.environ['TZ'] = 'Europe/Madrid'
-time.tzset()
-
 
 @client.event
 async def on_ready():
