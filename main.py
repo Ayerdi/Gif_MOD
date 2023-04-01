@@ -1,30 +1,34 @@
 from imports import *
 from config import *
-
 from utils import *
-
 import datetime
 from datetime import datetime
-now = datetime.now()
 
 
 @client.event
 async def on_ready():
     print(f'{client.user} has connected to Discord!')
     change_status.start()
-    # reset_whitelist.start()
+    loop = asyncio.get_event_loop()
+    loop.call_later(57600, check_time_whitelist)
+
+
+def check_time_whitelist():
+    whitelist = load_whitelist()
+    current_time = time.time()
+    for user_id, name, added_time in whitelist:
+        time_left = current_time - added_time
+        horas = 16
+        time_limit = horas * 3600 
+        if time_left > time_limit:
+            remove_from_whitelist(user_id, added_time)
 
 
 @client.command()
 async def piing(ctx):
     await ctx.send(f'Pong! {round(client.latency * 1000)}ms')
 
-#@client.command()  # Comando para enviar mensaje o reaccionar
-#async def natalia(ctx):
-  #channel = client.get_channel(613130176808878109)  # reemplaza ID_DEL_CANAL con el ID correspondiente
-  #message = await channel.fetch_message(1091089521824772096)  # reemplaza el ID del mensaje
-  #await channel.send('No ha sido una rata, he sido yo. :)', reference=message)
-  #await message.add_reaction('🤖')
+
 
 @client.command()
 async def add(ctx):
@@ -93,18 +97,12 @@ async def on_message(message):
             else:
                 whitelist.append((message.author.id, message.author.name, time.time()))
                 save_whitelist(whitelist)
-                time_added = next(time_added for id, _, time_added in whitelist if id == message.author.id)
-                loop = asyncio.get_event_loop()
-                # FIXME: Esto deberia de ir al principio del bot
-                loop.call_later(10, remove_from_whitelist,
-                                message.author.id, time_added)
                 print_whitelist(whitelist)
     await client.process_commands(message)
 
 
 @client.event
 async def on_voice_state_update(member, before, after):
-    # log_voice_state(member, before, after)
     whitelist = load_whitelist()
     if not member.bot and member.name not in [name for _, name, _ in whitelist]:
         if after.channel is not None and after.channel != before.channel:
@@ -132,15 +130,3 @@ def get_time_left(user_id):
 
 
 client.run(TOKEN)
-
-
-# def log_voice_state(user, before, after):
-#     with open('voice_log.txt', 'a') as f:
-#         now = datetime.now()
-#         if before.channel != after.channel:
-#             if before.channel:
-#                 f.write(
-#                     f'{now} - {user.name} salió del canal de voz {before.channel.name}\n')
-#             if after.channel:
-#                 f.write(
-#                     f'{now} - {user.name} entró al canal de voz {after.channel.name}\n')
